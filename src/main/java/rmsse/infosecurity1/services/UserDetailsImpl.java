@@ -8,6 +8,7 @@ import rmsse.infosecurity1.entities.User;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class UserDetailsImpl implements UserDetails {
@@ -20,6 +21,7 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
 
+    // ФИКС: Используем иммутабельную коллекцию
     private Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(Long id, String username, String email, String password,
@@ -28,7 +30,9 @@ public class UserDetailsImpl implements UserDetails {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.authorities = authorities;
+        // ФИКС: Создаем иммутабельную копию коллекции
+        this.authorities = authorities != null ?
+                List.copyOf(authorities) : Collections.emptyList();
     }
 
     public static UserDetailsImpl build(User user) {
@@ -47,8 +51,9 @@ public class UserDetailsImpl implements UserDetails {
     public String getEmail() { return email; }
 
     @Override
+    // ФИКС: Возвращаем иммутабельную коллекцию
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return Collections.unmodifiableCollection(authorities);
     }
 
     @Override
@@ -75,5 +80,10 @@ public class UserDetailsImpl implements UserDetails {
         if (o == null || getClass() != o.getClass()) return false;
         UserDetailsImpl user = (UserDetailsImpl) o;
         return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

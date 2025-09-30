@@ -1,6 +1,8 @@
 package rmsse.infosecurity1.entities;
 
 import jakarta.persistence.*;
+import rmsse.infosecurity1.entities.User;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,7 +31,7 @@ public class DataItem {
     public DataItem(String title, String content, User user) {
         this.title = title;
         this.content = content;
-        this.user = user;
+        this.user = user; // Это нормально для JPA entities
         this.createdAt = LocalDateTime.now();
     }
 
@@ -42,7 +44,6 @@ public class DataItem {
 
     public String getContent() { return content; }
     public void setContent(String content) {
-        // Базовая санитизация от XSS
         this.content = content != null ?
                 content.replace("<", "&lt;")
                         .replace(">", "&gt;")
@@ -54,6 +55,11 @@ public class DataItem {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
