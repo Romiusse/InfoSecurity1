@@ -82,6 +82,13 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Password Hashing -->
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -110,13 +117,6 @@
                     <effort>Max</effort>
                     <threshold>Low</threshold>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.owasp</groupId>
@@ -124,20 +124,10 @@
                 <version>12.1.3</version>
                 <configuration>
                     <failOnError>true</failOnError>
-                    <!-- Disable problematic analyzers -->
                     <ossIndexAnalyzerEnabled>false</ossIndexAnalyzerEnabled>
                     <retireJsAnalyzerEnabled>false</retireJsAnalyzerEnabled>
                     <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
-                    <!-- Configure NVD with your API key -->
-                    <nvdApiKey>4651c208-aef6-4b4c-807a-58fae9335853</nvdApiKey>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

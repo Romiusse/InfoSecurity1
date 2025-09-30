@@ -3,6 +3,7 @@ package rmsse.infosecurity1.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import rmsse.infosecurity1.dto.DataItemResponse;
 import rmsse.infosecurity1.services.DataService;
@@ -10,6 +11,7 @@ import rmsse.infosecurity1.services.DataService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/data")
@@ -25,15 +27,6 @@ public class DataController {
         return ResponseEntity.ok(data);
     }
 
-    @GetMapping("/my")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<DataItemResponse>> getMyData() {
-        // В реальном приложении username берется из SecurityContext
-        String username = "current_user"; // Заглушка
-        List<DataItemResponse> data = dataService.getUserData(username);
-        return ResponseEntity.ok(data);
-    }
-
     @PostMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createDataItem(@RequestBody Map<String, String> request) {
@@ -46,10 +39,11 @@ public class DataController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        // В реальном приложении username берется из SecurityContext
-        String username = "current_user"; // Заглушка
 
         try {
+            String username = Objects.requireNonNull(SecurityContextHolder.getContext()
+                            .getAuthentication())
+                    .getName();
             DataItemResponse createdItem = dataService.createDataItem(title, content, username);
             return ResponseEntity.ok(createdItem);
         } catch (Exception e) {
