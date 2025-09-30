@@ -129,6 +129,9 @@
                     <failOnError>true</failOnError>
                     <effort>Max</effort>
                     <threshold>Low</threshold>
+                    <analyzers>
+                        <ossIndexEnabled>false</ossIndexEnabled>
+                    </analyzers>
                 </configuration>
             </plugin>
             <plugin>
