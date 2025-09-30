@@ -1,8 +1,6 @@
 package rmsse.infosecurity1.entities;
 
 import jakarta.persistence.*;
-import rmsse.infosecurity1.entities.User;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,10 +26,12 @@ public class DataItem {
     // Конструкторы
     public DataItem() {}
 
-    public DataItem(String title, String content, User user) {
+    public DataItem(String title, String content, Long userId) {
         this.title = title;
         this.content = content;
-        this.user = user; // Это нормально для JPA entities
+        // ФИКС: Создаем новый User только с ID вместо принятия внешнего мутабельного объекта
+        this.user = new User();
+        this.user.setId(userId);
         this.createdAt = LocalDateTime.now();
     }
 
@@ -55,11 +55,35 @@ public class DataItem {
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public User getUser() {
-        return user;
+    public UserDTO getUser() {
+        if (this.user == null) {
+            return null;
+        }
+        return new UserDTO(this.user.getId(), this.user.getUsername());
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    // ФИКС: Принимаем только ID пользователя вместо целого объекта
+    public void setUserId(Long userId) {
+        if (this.user == null) {
+            this.user = new User();
+        }
+        this.user.setId(userId);
+    }
+
+    protected User getUserEntity() {
+        return this.user;
+    }
+
+    public static class UserDTO {
+        private final Long id;
+        private final String username;
+
+        public UserDTO(Long id, String username) {
+            this.id = id;
+            this.username = username;
+        }
+
+        public Long getId() { return id; }
+        public String getUsername() { return username; }
     }
 }

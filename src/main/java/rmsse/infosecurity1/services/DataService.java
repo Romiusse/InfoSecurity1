@@ -36,19 +36,22 @@ public class DataService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        DataItem dataItem = new DataItem(title, content, user);
+        DataItem dataItem = new DataItem(title, content, user.getId());
         DataItem savedItem = dataItemRepository.save(dataItem);
 
         return convertToResponse(savedItem);
     }
 
     private DataItemResponse convertToResponse(DataItem dataItem) {
+        DataItem.UserDTO userDTO = dataItem.getUser();
+        String author = userDTO != null ? userDTO.getUsername() : "Unknown";
+
         return new DataItemResponse(
                 dataItem.getId(),
                 dataItem.getTitle(),
                 dataItem.getContent(),
                 dataItem.getCreatedAt(),
-                dataItem.getUser().getUsername()
+                author
         );
     }
 }
