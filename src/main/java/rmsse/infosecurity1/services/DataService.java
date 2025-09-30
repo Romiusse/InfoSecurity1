@@ -33,7 +33,6 @@ public class DataService {
     }
 
     public DataItemResponse createDataItem(String title, String content, String username) {
-        List<User> l = userRepository.findAll();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
