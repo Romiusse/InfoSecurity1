@@ -7,6 +7,7 @@ import rmsse.infosecurity1.entities.DataItem;
 import rmsse.infosecurity1.entities.User;
 import rmsse.infosecurity1.repositories.DataItemRepository;
 import rmsse.infosecurity1.repositories.UserRepository;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +37,11 @@ public class DataService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        DataItem dataItem = new DataItem(title, content, user.getId());
+        // Экранирование с помощью Spring
+        String escapedTitle = HtmlUtils.htmlEscape(title);
+        String escapedContent = HtmlUtils.htmlEscape(content);
+
+        DataItem dataItem = new DataItem(escapedTitle, escapedContent, user.getId());
         DataItem savedItem = dataItemRepository.save(dataItem);
 
         return convertToResponse(savedItem);
